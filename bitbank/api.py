@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
 import python_bitbankcc
 import json
 from utils.Config import Config
