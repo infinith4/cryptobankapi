@@ -1,5 +1,6 @@
 import python_bitbankcc
 import json
+from utils.Config import Config
 
 class BitBankPubAPI:
 
@@ -17,8 +18,10 @@ class BitBankPubAPI:
 class BitBankPrvAPI:
 
     def __init__(self):
-        API_KEY = ''
-        API_SECRET = ''
+        configFile = "../app_config.yml"
+        config = Config(configFile).content
+        API_KEY = config['BANKINFO']['BITBANK']['API_KEY']
+        API_SECRET = config['BANKINFO']['BITBANK']['SECRET_KEY']
         self.prv = python_bitbankcc.private(API_KEY, API_SECRET)
 
     def get_asset(self):
@@ -41,6 +44,7 @@ def main():
     print(json.dumps(asset_dict['assets'], indent=2))
 
     asset_jpy = 0
+    asset_btc = 0
     #btctojpy = ticker['last'] * asset_dict['assets']
     for asset in asset_dict['assets']:
         print("asset: " + asset.get('asset'))
@@ -49,6 +53,14 @@ def main():
             ticker = pub_set.get_ticker(asset.get('asset') + '_jpy')
             print(ticker['last'])
             asset_jpy += float(asset.get('onhand_amount')) * float(ticker['last'])
+        else:
+            if asset.get('asset') == 'ltc' or asset.get('asset') == 'eth' :
+                ticker = pub_set.get_ticker(asset.get('asset') + '_btc')
+                asset_btc += float(asset.get('onhand_amount')) * float(ticker['last'])
+
+    ticker_btc = pub_set.get_ticker('btc_jpy')
+    asset_jpy += float(asset_btc) * float(ticker_btc['last'])
+
     print(asset_jpy)
 
 if __name__ == '__main__':

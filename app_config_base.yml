@@ -1,0 +1,8 @@
+BANKINFO: 
+  COINALL:
+    API_KEY: ""
+    SECRET_KEY: ""
+    PASS_PHRASE: ""
+  BITBANK:
+    API_KEY: ""
+    SECRET_KEY: ""

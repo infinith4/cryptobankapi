@@ -61,8 +61,8 @@ header = get_header(api_key, signature(timestamp, 'GET', request_path_currencies
 # do request
 response = requests.get(base_url + request_path_currencies, headers=header)
 # json
-print(response.json())
-print(json.dumps(response.json(), indent=2))
+#print(response.json())
+#print(json.dumps(response.json(), indent=2))
 
 ## funding account wallet
 header = get_header(api_key, signature(timestamp, 'GET', request_path_wallet, "None", secret_key), timestamp, pass_phrase)
@@ -71,14 +71,25 @@ response_wallet = requests.get(base_url + request_path_wallet, headers=header)
 #print(response_wallet.json())
 print(json.dumps(response_wallet.json(), indent=2))
 
+balance_BSV = 0
+for asset in response_wallet.json():
+    print("asset: " + asset.get('balance'))
+    if asset.get('currency') == "BSV":
+        balance_BSV += float(asset.get('balance'))
+        
+
 ## trading account wallet
-header = get_header(api_key, signature(timestamp, 'GET', request_path_instruments, "None", secret_key), timestamp, pass_phrase)
-response_instruments = requests.get(base_url + request_path_instruments, headers=header)
+header = get_header(api_key, signature(timestamp, 'GET', request_path_spot, "None", secret_key), timestamp, pass_phrase)
+response_spot = requests.get(base_url + request_path_spot, headers=header)
 # json
 #print(response_spot.json())
-print(json.dumps(response_instruments.json(), indent=2))
+print(json.dumps(response_spot.json(), indent=2))
 
-
+for asset in response_spot.json():
+    print("asset: " + asset.get('balance'))
+    if asset.get('currency') == "BSV":
+        balance_BSV += float(asset.get('balance'))
+    
 
 ## Get Market Data
 header = get_header(api_key, signature(timestamp, 'GET', request_path_instruments, "None", secret_key), timestamp, pass_phrase)
@@ -86,7 +97,9 @@ response_instruments = requests.get(base_url + request_path_instruments + "?gran
 # json
 #print(response_spot.json())
 print(json.dumps(response_instruments.json()[0], indent=2))
-# print(float(response_instruments.json()[0][1]) * 9.2)
+print(float(response_instruments.json()[0][1]) * balance_BSV)
+
+
 
 # Response
 # Parameter	Type	Description
