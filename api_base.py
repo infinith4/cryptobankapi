@@ -1,4 +1,6 @@
 from coinall.CoinallAPI import CoinallAPI
+from bitbank.BitBankAPI import BitBankPrvAPI
+
 from utils.Config import Config
 
 
@@ -13,4 +15,17 @@ print(PASS_PHRASE)
 coinalapi = CoinallAPI(API_KEY, API_SECRET, PASS_PHRASE)
 balance_bsv = coinalapi.get_balance(API_KEY, API_SECRET, PASS_PHRASE)
 bsv_price = coinalapi.get_marketdata_bsv()
-print(balance_bsv * bsv_price)
+coinall_asset_jpy = balance_bsv * bsv_price
+print(coinall_asset_jpy)
+
+
+API_KEY = config['BANKINFO']['BITBANK']['API_KEY']
+API_SECRET = config['BANKINFO']['BITBANK']['SECRET_KEY']
+
+
+bitbankapi = BitBankPrvAPI(API_KEY, API_SECRET)
+
+bitbank_asset_jpy = bitbankapi.get_asset_jpy()
+
+print((coinall_asset_jpy*100) + bitbank_asset_jpy)
+
