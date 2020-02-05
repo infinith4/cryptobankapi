@@ -47,7 +47,9 @@ class BitBankPrvAPI:
         for asset in asset_dict['assets']:
             print("asset: " + asset.get('asset'))
             print("onhand_amount: " + asset.get('onhand_amount'))
-            if asset.get('asset') != 'jpy' and asset.get('asset') != 'ltc' and asset.get('asset') != 'eth' :
+            if asset.get('asset') == 'jpy':
+                asset_jpy += float(asset.get('onhand_amount'))
+            elif asset.get('asset') != 'ltc' and asset.get('asset') != 'eth' :
                 ticker = pub_set.get_ticker(asset.get('asset') + '_jpy')
                 print(ticker['last'])
                 asset_jpy += float(asset.get('onhand_amount')) * float(ticker['last'])
