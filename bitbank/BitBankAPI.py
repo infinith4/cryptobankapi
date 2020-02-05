@@ -63,3 +63,11 @@ class BitBankPrvAPI:
 
         print(asset_jpy)
         return float(asset_jpy)
+
+    def get_trade(self, pair):
+        pub_set = BitBankPubAPI()
+        prv_set = self.prv
+        trade_btc_jpy = prv_set.get_trade_history(pair, 500)
+        print(json.dumps(trade_btc_jpy, indent=2))
+        return 0
+
