@@ -61,13 +61,47 @@ class BitBankPrvAPI:
         ticker_btc = pub_set.get_ticker('btc_jpy')
         asset_jpy += float(asset_btc) * float(ticker_btc['last'])
 
-        print(asset_jpy)
+        #print(asset_jpy)
         return float(asset_jpy)
 
     def get_trade(self, pair):
         pub_set = BitBankPubAPI()
         prv_set = self.prv
         trade_btc_jpy = prv_set.get_trade_history(pair, 500)
-        print(json.dumps(trade_btc_jpy, indent=2))
+        #print(json.dumps(trade_btc_jpy, indent=2))
+        #print(len(trade_btc_jpy['trades']))
+        # get side: buy
+        # get side: sell
+        amount_buy = 0
+        price_buy = 0
+        count_buy = 0
+        amount_sell = 0
+        price_sell = 0
+        count_sell = 0
+        
+        for item in trade_btc_jpy['trades']:
+            if item['side'] == 'buy':
+                amount_buy += float(item['amount'])
+                price_buy += float(item['price'])
+                count_buy += 1
+                print('buy amount' + item['amount'])
+                print('buy price' + item['price'])
+            elif item['side'] == 'sell':
+                amount_sell += float(item['amount'])
+                price_sell += float(item['price'])
+                count_sell += 1
+                print('sell amount' + item['amount'])
+                print('sell price' + item['price'])
+        print(amount_buy)
+        print(amount_sell)
+        average_price_buy = price_buy/count_buy
+        average_price_sell = price_sell/count_sell
+        print(average_price_buy)
+        print(average_price_sell)
+        average_amount_buy = average_price_buy * amount_sell
+        average_amount_sell = average_price_sell * amount_sell
+        print(average_amount_buy)
+        print(average_amount_sell)
+        print(average_amount_sell - average_amount_buy)
         return 0
 
