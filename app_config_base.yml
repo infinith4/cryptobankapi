@@ -6,3 +6,6 @@ BANKINFO:
   BITBANK:
     API_KEY: ""
     SECRET_KEY: ""
+  BITFLYER:
+    API_KEY: ""
+    SECRET_KEY: ""
