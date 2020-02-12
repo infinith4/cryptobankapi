@@ -1,6 +1,6 @@
 from coinall.CoinallAPI import CoinallAPI
 from bitbank.BitBankAPI import BitBankPrvAPI
-from bitflyer.BitflyerAPI import BitflyerAPI
+#from bitflyer.BitflyerAPI import BitflyerAPI
 
 from utils.Config import Config
 
@@ -38,5 +38,5 @@ bitbankapi.get_withdraw("btc")
 API_KEY = config['BANKINFO']['BITFLYER']['API_KEY']
 API_SECRET = config['BANKINFO']['BITFLYER']['SECRET_KEY']
 
-bitflyerapi = BitflyerAPI(API_KEY, API_SECRET)
+#bitflyerapi = BitflyerAPI(API_KEY, API_SECRET)
 
