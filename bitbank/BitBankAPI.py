@@ -75,33 +75,39 @@ class BitBankPrvAPI:
         amount_buy = 0
         price_buy = 0
         count_buy = 0
+        
         amount_sell = 0
         price_sell = 0
         count_sell = 0
         
         for item in trade_btc_jpy['trades']:
+            item_amount = float(item['amount'])
+            item_price = float(item['price'])
+            item_amount_price = item_amount * item_price
             if item['side'] == 'buy':
-                amount_buy += float(item['amount'])
-                price_buy += float(item['price'])
+                amount_buy += item_amount
+                price_buy += item_price
                 count_buy += 1
-                print('buy amount' + item['amount'])
-                print('buy price' + item['price'])
+                print('amount\t' + str(item_amount) +'\tprice\t' + str(item_price) + '\tbuy amount * price\t' + str(item_amount_price))
             elif item['side'] == 'sell':
-                amount_sell += float(item['amount'])
-                price_sell += float(item['price'])
+                amount_sell += item_amount
+                price_sell += item_price
                 count_sell += 1
-                print('sell amount' + item['amount'])
-                print('sell price' + item['price'])
-        print(amount_buy)
-        print(amount_sell)
+                print('amount\t' + str(item_amount) +'\tprice\t' + str(item_price) + '\tsell amount * price\t' + str(item_amount_price))
+        print('amount_buy\t' + str(amount_buy))
+        print('amount_sell\t' + str(amount_sell))
         average_price_buy = price_buy/count_buy
         average_price_sell = price_sell/count_sell
-        print(average_price_buy)
-        print(average_price_sell)
-        average_amount_buy = average_price_buy * amount_sell
+        print('average_price_buy\t' + str(average_price_buy))
+        print('average_price_sell\t' + str(average_price_sell))
+        average_amount_buy = average_price_buy * amount_buy
         average_amount_sell = average_price_sell * amount_sell
         print(average_amount_buy)
         print(average_amount_sell)
-        print(average_amount_sell - average_amount_buy)
+        rest_amount = amount_buy - amount_sell
+        ticker_pair = pub_set.get_ticker(pair)
+        print('ticker_pair\t' + ticker_pair['last'])
+        profit = (rest_amount * (float(ticker_pair['last']) - average_price_buy))
+        print('profit\t' + str(profit))
         return 0
 

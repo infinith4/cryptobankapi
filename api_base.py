@@ -30,3 +30,4 @@ bitbank_asset_jpy = bitbankapi.get_asset_jpy()
 print((coinall_asset_jpy*100) + bitbank_asset_jpy)
 
 bitbankapi.get_trade("btc_jpy")
+bitbankapi.get_trade("mona_jpy")
