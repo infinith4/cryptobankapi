@@ -68,8 +68,6 @@ class BitBankPrvAPI:
         pub_set = BitBankPubAPI()
         prv_set = self.prv
         trade_btc_jpy = prv_set.get_trade_history(pair, 500)
-        #print(json.dumps(trade_btc_jpy, indent=2))
-        #print(len(trade_btc_jpy['trades']))
         # get side: buy
         # get side: sell
         amount_buy = 0
@@ -109,5 +107,13 @@ class BitBankPrvAPI:
         print('ticker_pair\t' + ticker_pair['last'])
         profit = (rest_amount * (float(ticker_pair['last']) - average_price_buy))
         print('profit\t' + str(profit))
+        return 0
+
+    def get_withdraw(self, asset):
+        pub_set = BitBankPubAPI()
+        prv_set = self.prv
+        # asset enum: btc, xrp, ltc, eth, mona, bcc
+        withdraw_account = prv_set.get_withdraw_account(asset)
+        print(json.dumps(withdraw_account, indent=2))
         return 0
 
