@@ -1,6 +1,6 @@
 from coinall.CoinallAPI import CoinallAPI
 from bitbank.BitBankAPI import BitBankPrvAPI
-#from bitflyer.BitflyerAPI import BitflyerAPI
+from bitflyer.BitflyerAPI import BitflyerAPI
 
 from utils.Config import Config
 
@@ -32,11 +32,13 @@ print((coinall_asset_jpy*100) + bitbank_asset_jpy)
 
 bitbankapi.get_trade("btc_jpy")
 bitbankapi.get_trade("mona_jpy")
+bitbankapi.get_trade("xrp_jpy")
+bitbankapi.get_trade("bcc_jpy")
 
 bitbankapi.get_withdraw("btc")
 
 API_KEY = config['BANKINFO']['BITFLYER']['API_KEY']
 API_SECRET = config['BANKINFO']['BITFLYER']['SECRET_KEY']
 
-#bitflyerapi = BitflyerAPI(API_KEY, API_SECRET)
+bitflyerapi = BitflyerAPI(API_KEY, API_SECRET)
 
