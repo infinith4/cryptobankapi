@@ -24,7 +24,8 @@ class CoinallAPI:
         self.request_path_timestamp = "/api/general/v3/time"
         self.request_path_wallet = "/api/account/v3/wallet"
         self.request_path_spot = "/api/spot/v3/accounts"
-        self.request_path_instruments = "/api/spot/v3/instruments/BSV-USDT/candles"
+        self.request_path_instruments_bsv_usdt = "/api/spot/v3/instruments/BSV-USDT/candles"
+        self.request_path_instruments_okb_usdt = "/api/spot/v3/instruments/OKB-USDT/candles"
 
     # signature
     def signature(self, timestamp, method, request_path, body, secret_key):
@@ -54,7 +55,7 @@ class CoinallAPI:
 
         return url[0:-1]
 
-    def get_balance(self, api_key, secret_key, pass_phrase):
+    def get_balance(self, api_key, secret_key, pass_phrase, cryptocurrency_name):
         # set request header
         response_timestamp = requests.get(self.base_url + self.request_path_timestamp)
         timestamp = response_timestamp.json()["iso"]
@@ -73,10 +74,10 @@ class CoinallAPI:
         #print(response_wallet.json())
         print(json.dumps(response_wallet.json(), indent=2))
 
-        balance_BSV = 0
+        balance = 0
         for asset in response_wallet.json():
-            if asset["currency"] == "BSV":
-                balance_BSV += float(asset["balance"])
+            if asset["currency"] == cryptocurrency_name:
+                balance += float(asset["balance"])
 
         ## trading account wallet
         header = self.get_header(api_key, self.signature(timestamp, 'GET', self.request_path_spot, "None", secret_key), timestamp, self.pass_phrase)
@@ -86,21 +87,33 @@ class CoinallAPI:
         print(json.dumps(request_path_spot.json(), indent=2))
 
         for asset in request_path_spot.json():
-            if asset["currency"] == "BSV":
-                balance_BSV += float(asset["balance"])
+            if asset["currency"] == cryptocurrency_name:
+                balance += float(asset["balance"])
 
-        print(balance_BSV)
-        return balance_BSV
+        #print(balance_BSV)
+        return balance
 
     def get_marketdata_bsv(self):
         response_timestamp = requests.get(self.base_url + self.request_path_timestamp)
         timestamp = response_timestamp.json()["iso"]
         
         ## Get Market Data
-        header = self.get_header(self.api_key, self.signature(timestamp, 'GET', self.request_path_instruments, "None", self.secret_key), timestamp, self.pass_phrase)
-        response_instruments = requests.get(self.base_url + self.request_path_instruments + "?granularity=60", headers=header)
+        header = self.get_header(self.api_key, self.signature(timestamp, 'GET', self.request_path_instruments_bsv_usdt, "None", self.secret_key), timestamp, self.pass_phrase)
+        response_instruments = requests.get(self.base_url + self.request_path_instruments_bsv_usdt + "?granularity=60", headers=header)
         # json
-        #print(response_spot.json())
+        print("-----------")
+        print(json.dumps(response_instruments.json()[0], indent=2))
+        return float(response_instruments.json()[0][1])
+
+    def get_marketdata_okb(self):
+        response_timestamp = requests.get(self.base_url + self.request_path_timestamp)
+        timestamp = response_timestamp.json()["iso"]
+        
+        ## Get Market Data
+        header = self.get_header(self.api_key, self.signature(timestamp, 'GET', self.request_path_instruments_okb_usdt, "None", self.secret_key), timestamp, self.pass_phrase)
+        response_instruments = requests.get(self.base_url + self.request_path_instruments_okb_usdt + "?granularity=60", headers=header)
+        # json
+        print("-----------")
         print(json.dumps(response_instruments.json()[0], indent=2))
         return float(response_instruments.json()[0][1])
 
