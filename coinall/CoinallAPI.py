@@ -72,7 +72,7 @@ class CoinallAPI:
         response_wallet = requests.get(self.base_url + self.request_path_wallet, headers=header)
         # json
         #print(response_wallet.json())
-        print(json.dumps(response_wallet.json(), indent=2))
+        #print(json.dumps(response_wallet.json(), indent=2))
 
         balance = 0
         for asset in response_wallet.json():
@@ -84,7 +84,7 @@ class CoinallAPI:
         request_path_spot = requests.get(self.base_url + self.request_path_spot, headers=header)
         # json
         #print(response_spot.json())
-        print(json.dumps(request_path_spot.json(), indent=2))
+        #print(json.dumps(request_path_spot.json(), indent=2))
 
         for asset in request_path_spot.json():
             if asset["currency"] == cryptocurrency_name:
@@ -101,8 +101,8 @@ class CoinallAPI:
         header = self.get_header(self.api_key, self.signature(timestamp, 'GET', self.request_path_instruments_bsv_usdt, "None", self.secret_key), timestamp, self.pass_phrase)
         response_instruments = requests.get(self.base_url + self.request_path_instruments_bsv_usdt + "?granularity=60", headers=header)
         # json
-        print("-----------")
-        print(json.dumps(response_instruments.json()[0], indent=2))
+        #print("-----------")
+        #print(json.dumps(response_instruments.json()[0], indent=2))
         return float(response_instruments.json()[0][1])
 
     def get_marketdata_okb(self):
@@ -113,8 +113,8 @@ class CoinallAPI:
         header = self.get_header(self.api_key, self.signature(timestamp, 'GET', self.request_path_instruments_okb_usdt, "None", self.secret_key), timestamp, self.pass_phrase)
         response_instruments = requests.get(self.base_url + self.request_path_instruments_okb_usdt + "?granularity=60", headers=header)
         # json
-        print("-----------")
-        print(json.dumps(response_instruments.json()[0], indent=2))
+        #print("-----------")
+        #print(json.dumps(response_instruments.json()[0], indent=2))
         return float(response_instruments.json()[0][1])
 
 # Response

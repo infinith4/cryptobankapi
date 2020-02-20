@@ -35,11 +35,11 @@ class BitBankPrvAPI:
         prv_set = self.prv
 
         ticker = pub_set.get_ticker('btc_jpy')
-        print(ticker['last'])
+        #print(ticker['last'])
 
         asset_dict = prv_set.get_asset()
         #print(asset_dict['assets'])
-        print(json.dumps(asset_dict['assets'], indent=2))
+        #print(json.dumps(asset_dict['assets'], indent=2))
 
         asset_jpy = 0
         asset_btc = 0
@@ -52,7 +52,9 @@ class BitBankPrvAPI:
             elif asset.get('asset') != 'ltc' and asset.get('asset') != 'eth' :
                 ticker = pub_set.get_ticker(asset.get('asset') + '_jpy')
                 print(ticker['last'])
-                asset_jpy += float(asset.get('onhand_amount')) * float(ticker['last'])
+                item_asset_jpy = float(asset.get('onhand_amount')) * float(ticker['last'])
+                print("item_asset_jpy: " + str(item_asset_jpy))
+                asset_jpy += item_asset_jpy
             else:
                 if asset.get('asset') == 'ltc' or asset.get('asset') == 'eth' :
                     ticker = pub_set.get_ticker(asset.get('asset') + '_btc')
