@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+python-bitbankcc = {git = "https://github.com/bitbankinc/python-bitbankcc.git"}
+requests = "*"
+pybitflyer = "*"
+
+[requires]
+python_version = "3.6"
+
+[scripts]
+start = "python api_base.py"

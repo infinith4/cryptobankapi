@@ -22,7 +22,10 @@ balance_okb = coinalapi.get_balance(API_KEY, API_SECRET, PASS_PHRASE, "OKB")
 okb_price = coinalapi.get_marketdata_okb()
 coinall_asset_usdt += balance_okb * okb_price
 print(coinall_asset_usdt)
+print("coinall_asset_usdt * JPY_USDT")
 print(coinall_asset_usdt * JPY_USDT)
+
+######################################
 
 API_KEY = config['BANKINFO']['BITBANK']['API_KEY']
 API_SECRET = config['BANKINFO']['BITBANK']['SECRET_KEY']
@@ -40,6 +43,8 @@ bitbankapi.get_trade("xrp_jpy")
 bitbankapi.get_trade("bcc_jpy")
 
 bitbankapi.get_withdraw("btc")
+
+######################################
 
 API_KEY = config['BANKINFO']['BITFLYER']['API_KEY']
 API_SECRET = config['BANKINFO']['BITFLYER']['SECRET_KEY']
