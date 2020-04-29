@@ -45,7 +45,7 @@ class BitBankPrvAPI:
         asset_btc = 0
         #btctojpy = ticker['last'] * asset_dict['assets']
         for asset in asset_dict['assets']:
-            print("asset: " + asset.get('asset'))
+            print("===============asset: " + asset.get('asset'))
             print("onhand_amount: " + asset.get('onhand_amount'))
             if asset.get('asset') == 'jpy':
                 asset_jpy += float(asset.get('onhand_amount'))
@@ -67,6 +67,7 @@ class BitBankPrvAPI:
         return float(asset_jpy)
 
     def get_trade(self, pair):
+        print("pair:" + pair + "=======================")
         pub_set = BitBankPubAPI()
         prv_set = self.prv
         trade_btc_jpy = prv_set.get_trade_history(pair, 500)

@@ -5,7 +5,7 @@ from bitflyer.BitflyerAPI import BitflyerAPI
 from utils.Config import Config
 
 
-JPY_USDT = 110
+JPY_USDT = 107
 configFile = "app_config.yml"
 config = Config(configFile).content
 API_KEY = config['BANKINFO']['COINALL']['API_KEY']
