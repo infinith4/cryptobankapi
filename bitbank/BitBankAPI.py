@@ -89,12 +89,12 @@ class BitBankPrvAPI:
                 amount_buy += item_amount
                 price_buy += item_price
                 count_buy += 1
-                print('amount\t' + str(item_amount) +'\tprice\t' + str(item_price) + '\tbuy amount * price\t' + str(item_amount_price))
+                print('amount\t' + "{:>10.4f}".format(item_amount) +'\tprice\t' + "{:>10.4f}".format(item_price) + '\tbuy  amount * price\t' + "{:>10.4f}".format(item_amount_price))
             elif item['side'] == 'sell':
                 amount_sell += item_amount
                 price_sell += item_price
                 count_sell += 1
-                print('amount\t' + str(item_amount) +'\tprice\t' + str(item_price) + '\tsell amount * price\t' + str(item_amount_price))
+                print('amount\t' + "{:>10.4f}".format(item_amount) +'\tprice\t' + "{:>10.4f}".format(item_price) + '\tsell amount * price\t' + "{:>10.4f}".format(item_amount_price))
         print('amount_buy\t' + str(amount_buy))
         print('amount_sell\t' + str(amount_sell))
         average_price_buy = price_buy/count_buy
