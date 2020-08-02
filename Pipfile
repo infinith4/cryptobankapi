@@ -10,9 +10,11 @@ pylint = "*"
 python-bitbankcc = {git = "https://github.com/bitbankinc/python-bitbankcc.git"}
 requests = "*"
 pybitflyer = "*"
+pyyaml = "*"
+cryptocom-exchange = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"
 
 [scripts]
 start = "python api_base.py"
