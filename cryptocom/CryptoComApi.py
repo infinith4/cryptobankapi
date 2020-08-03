@@ -7,6 +7,10 @@ import json
 import requests
 import time
 
+from pprint import pprint
+
+##https://crypto.com/exchange-doc
+
 class CryptoComApi:
 
     def __init__(self, apiKey, secretKey):
@@ -14,6 +18,25 @@ class CryptoComApi:
 
         self.API_KEY = apiKey
         self.SECRET_KEY = secretKey
+
+    def get_nonce(self):
+        #return str(int(time.time() * 1000))
+        return str(int(time.time() * 1000))
+
+    def make_signature(self, nonce: str, url: str, req: dict):
+        # First ensure the params are alphabetically sorted by key
+        paramString = ""
+
+        if "params" in req:
+            for key in req['params']:
+                paramString += key
+                paramString += "=" + str(req['params'][key])
+        sigPayload = f"{nonce}{url}{paramString}"
+        print("sigPayload")
+        print(sigPayload)
+        sig = hmac.new(self.SECRET_KEY.encode('utf-8'), sigPayload.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()
+
+        return sig
 
     ## TODO: private/get-order-history
     #def private_get_order_history():
@@ -52,35 +75,44 @@ class CryptoComApi:
         print(response)
         return sig
 
+    # private/get-order-history
     def private_get_order_history(self):
 
+        method = "private/get-order-history"
         req = {
         "id": 12,
-        "method": "private/get-order-history",
+        "method": method,
         "api_key": self.API_KEY,
         "params": {
             "instrument_name": "BTC_USDT",
         },
         "sig": "",
-        "nonce": int(time.time() * 1000)
+        "nonce": self.get_nonce()
         }
-        # First ensure the params are alphabetically sorted by key
-        paramString = ""
 
-        if "params" in req:
-            for key in req['params']:
-                paramString += key
-                paramString += str(req['params'][key])
-
-        sigPayload = req['method'] + str(req['id']) + req['api_key'] + paramString + str(req['nonce'])
-        print("sigPayload")
-        print(sigPayload)
-        sig = hmac.new(bytes(str(self.SECRET_KEY), 'utf-8'), msg=bytes(sigPayload, 'utf-8'), digestmod=hashlib.sha256).hexdigest()
+        #url = f"{self.base_url}/{method}?instrument_name=BTC_USDT"
+        url = f"{self.base_url}/{method}"
+        sig = self.make_signature(nonce = req["nonce"], url = url, req=req)
+        sig = self.make_signature(nonce = req["nonce"], url = url, req=req)
 
         print("sig")
         print(sig)
         req["sig"] = sig
         print(req)
-        response = requests.post(self.base_url + "/private/get-order-history", req)
+        response = requests.post(self.base_url + "/private/get-order-history", req, headers=headers)
         print(response.content)
         return sig
+
+    ## GET public/get-instruments
+    def public_get_instruments(self):
+        req = {
+            "id":11,
+            "method":"public/get-instruments",
+            "nonce": self.get_nonce()
+        }
+        response = requests.get(self.base_url + "/public/get-instruments", req)
+
+        pprint(response)
+        pprint(json.loads(response.text))
+
+        return response

@@ -3,6 +3,7 @@ from bitbank.BitBankAPI import BitBankPrvAPI
 from bitflyer.BitflyerAPI import BitflyerAPI
 from cryptocom.CryptoComApi import CryptoComApi
 from coincheck.CoinCheckApi import CoinCheckApi
+from coinmarketcap.CoinMarketCapApi import CoinMarketCapApi
 from utils.Config import Config
 
 JPY_USDT = 107
@@ -19,13 +20,21 @@ CRYPTOCOM_API_SECRET = config['BANKINFO']['CRYPTOCOM']['SECRET_KEY']
 COINCHECK_API_KEY = config['BANKINFO']['COINCHECK']['API_KEY']
 COINCHECK_SECRET_KEY = config['BANKINFO']['COINCHECK']['SECRET_KEY']
 
-###########Coincheck###########################
+COINMARKETCAP_API_KEY = config['BANKINFO']['COINMARKETCAP']['API_KEY']
+#COINMARKETCAP_SECRET_KEY = config['BANKINFO']['COINMARKETCAP']['SECRET_KEY']
 
-coinCheckApi = CoinCheckApi(COINCHECK_API_KEY, COINCHECK_SECRET_KEY)
-coinCheckApi.exchange_orders_transactions_pagination()
-coinCheckApi.get_deposit_money()
-coinCheckApi.get_withdraws()
-coinCheckApi.get_trades("btc_jpy")
+########### CoinMarketCap ###########################
+
+# coinMarketApi = CoinMarketCapApi(COINMARKETCAP_API_KEY)
+# coinMarketApi.get_listing()
+
+########### Coincheck ###########################
+
+# coinCheckApi = CoinCheckApi(COINCHECK_API_KEY, COINCHECK_SECRET_KEY)
+# coinCheckApi.exchange_orders_transactions_pagination()
+# coinCheckApi.get_deposit_money()
+# coinCheckApi.get_withdraws()
+# coinCheckApi.get_trades("btc_jpy")
 #coinCheckApi.accounts_balance()
 #coinCheckApi.get_send_money()
 
@@ -34,9 +43,11 @@ coinCheckApi.get_trades("btc_jpy")
 ###########Crypto.com###########################
 
 
-# cryptoComApi = CryptoComApi(CRYPTOCOM_API_KEY, CRYPTOCOM_API_SECRET)
+cryptoComApi = CryptoComApi(CRYPTOCOM_API_KEY, CRYPTOCOM_API_SECRET)
 
-# cryptoComApi.private_get_order_history()
+cryptoComApi.private_get_order_history()
+
+#cryptoComApi.public_get_instruments()
 
 # ######################################
 
