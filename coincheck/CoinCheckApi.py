@@ -35,20 +35,17 @@ class CoinCheckApi:
 
         return sig
 
-    def make_header(self, url,
-                access_key=None,
-                secret_key=None):
+    def make_header(self, url, access_key:str, req: object = None):
         ''' create request header function
         :param url: URL for the new :class:`Request` object.
         '''
         nonce = self.get_nonce()
         url    = url
-        message = nonce + url
-        signature = hmac.new(secret_key.encode('utf-8'), message.encode('utf-8'), hashlib.sha256).hexdigest()
+        sig = self.make_signature(nonce, url, req)
         headers = {
         'ACCESS-KEY'      : access_key,
         'ACCESS-NONCE'    : nonce,
-        'ACCESS-SIGNATURE': signature
+        'ACCESS-SIGNATURE': sig
         }
         return headers
 
@@ -60,16 +57,9 @@ class CoinCheckApi:
             # }
         }
 
-        nonce = self.get_nonce()
         url = f"{self.base_url}{method}"
-        sig = self.make_signature(nonce, url, req)
-        headers = {
-            "ACCESS-KEY": self.API_KEY,
-            "ACCESS-NONCE": str(nonce),
-            "ACCESS-SIGNATURE": sig
-        }
+        headers = self.make_header(url, self.API_KEY, req)
         pprint(url)
-        pprint(nonce)
         pprint(headers)
         response = requests.get(url, headers=headers)
 

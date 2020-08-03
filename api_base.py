@@ -56,15 +56,21 @@ coinCheckApi.exchange_orders_transactions()
 
 # bitbank_asset_jpy = bitbankapi.get_asset_jpy()
 
+# print("all asset: ")
 # print((coinall_asset_usdt*JPY_USDT) + bitbank_asset_jpy)
 
+# print("==================bitbank==================")
+# print("btc_jpy==================")
 # bitbankapi.get_trade("btc_jpy")
+# print("mona_jpy==================")
 # bitbankapi.get_trade("mona_jpy")
+# print("xrp_jpy==================")
 # bitbankapi.get_trade("xrp_jpy")
+# print("bcc_jpy==================")
 # bitbankapi.get_trade("bcc_jpy")
 
+# print("get_withdraw btc==================")
 # bitbankapi.get_withdraw("btc")
-
 # ######################################
 
 # # API_KEY = config['BANKINFO']['BITFLYER']['API_KEY']

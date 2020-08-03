@@ -1,3 +1,7 @@
+sudo apt update
+sudo apt install -y python3.8
+
+
 https://github.com/bitbankinc/python-bitbankcc
 
 pipenv install git+https://github.com/bitbankinc/python-bitbankcc.git#egg=python-bitbankcc
@@ -16,3 +20,8 @@ pipenv shell
 ## Start
 
 pipenv run start
+
+## deactivate
+
+exit
+
