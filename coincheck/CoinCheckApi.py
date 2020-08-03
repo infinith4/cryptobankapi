@@ -68,6 +68,26 @@ class CoinCheckApi:
         pprint(json.loads(response.text))
         return json.loads(response.text)
 
+    ## GET /api/exchange/orders/transactions_pagination
+    def exchange_orders_transactions_pagination(self):
+        method = "/exchange/orders/transactions_pagination"
+        req = {
+            # "params": {
+            #     "aaa": ""
+            # }
+        }
+
+        url = f"{self.base_url}{method}"
+        headers = self.make_header(url, self.API_KEY, req)
+        pprint(url)
+        pprint(headers)
+        response = requests.get(url, headers=headers)
+
+        pprint(response)
+        pprint(response.content)
+        pprint(json.loads(response.text))
+        return json.loads(response.text)
+    
     ## GET /api/accounts/balance
     def accounts_balance(self):
         method = "/accounts/balance"
@@ -105,3 +125,52 @@ class CoinCheckApi:
         pprint(response.content)
         pprint(json.loads(response.text))
         return json.loads(response.text)
+
+    ## GET /api/deposit_money
+    def get_deposit_money(self, currency: str="BTC"):
+        method = "/deposit_money"
+        req = {
+            "params":{
+                "currency" : currency
+            }
+        }
+
+        url = f"{self.base_url}{method}?currency={currency}"
+        #url = f"{self.base_url}{method}"
+        headers = self.make_header(url, self.API_KEY, req)
+        pprint(url)
+        pprint(headers)
+        response = requests.get(url, headers=headers)
+
+        pprint(response)
+        pprint(response.content)
+        pprint(json.loads(response.text))
+        return json.loads(response.text)
+
+    ## GET /api/withdraws
+    def get_withdraws(self):
+        method = "/withdraws"
+        req = {
+            "params":{
+            }
+        }
+
+        url = f"{self.base_url}{method}"
+        headers = self.make_header(url, self.API_KEY, req)
+        pprint(url)
+        pprint(headers)
+        response = requests.get(url, headers=headers)
+
+        pprint(response)
+        pprint(response.content)
+        pprint(json.loads(response.text))
+        return json.loads(response.text)
+
+
+    # HTTP REQUEST
+    # GET /api/trades
+
+    # PARAMETERS
+    # *pair Specify a currency pair to trade. "btc_jpy" and "fct_jpy" are now available.
+    def get_trades(self):
+        
