@@ -77,7 +77,7 @@ class CryptoComApi:
         return sig
 
     # private/get-order-history
-    def private_get_order_history(self):
+    def private_get_order_history(self, instrument_name:str = "BTC_USDT"):
 
         method = "private/get-order-history"
         req = {
@@ -85,14 +85,16 @@ class CryptoComApi:
         "method": method,
         "api_key": self.API_KEY,
         "params": {
-            "instrument_name": "BTC_USDT",
+            "instrument_name": instrument_name,
+            ##TODO: datetime to timestamp
+            #NOTE: default is 24 hours ago.
         },
         "sig": "",
         "nonce": self.get_nonce()
         }
 
         #url = f"{self.base_url}/{method}?instrument_name=BTC_USDT"
-        url = f"{self.base_url}/{method}"
+        url = f"{self.base_url}/{method}?instrument_name={instrument_name}"
         id = str(req["id"])
         sig = self.make_signature(method = method, id = id, nonce = req["nonce"], req=req)
 
@@ -103,20 +105,22 @@ class CryptoComApi:
         headers = {
             "Content-Type" : "application/json"
         }
-        response = requests.post(self.base_url + "/private/get-order-history", json=req, headers=headers)
+        response = requests.post(url, json=req, headers=headers)
         print(response.content)
         return sig
 
     ## GET public/get-instruments
     def public_get_instruments(self):
+        method = "public/get-instruments"
         req = {
             "id":11,
-            "method":"public/get-instruments",
+            "method": method,
             "nonce": self.get_nonce()
         }
-        response = requests.get(self.base_url + "/public/get-instruments", req)
+        url = f"{self.base_url}/{method}"
+        response = requests.get(url, json=req)
 
         pprint(response)
         pprint(json.loads(response.text))
 
-        return response
+        return json.loads(response.text)

@@ -45,7 +45,8 @@ COINMARKETCAP_API_KEY = config['BANKINFO']['COINMARKETCAP']['API_KEY']
 
 cryptoComApi = CryptoComApi(CRYPTOCOM_API_KEY, CRYPTOCOM_API_SECRET)
 
-cryptoComApi.private_get_order_history()
+cryptoComApi.private_get_order_history("CRO_USDT")
+cryptoComApi.public_get_instruments()
 
 #cryptoComApi.public_get_instruments()
 
