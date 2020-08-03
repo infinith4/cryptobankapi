@@ -172,5 +172,20 @@ class CoinCheckApi:
 
     # PARAMETERS
     # *pair Specify a currency pair to trade. "btc_jpy" and "fct_jpy" are now available.
-    def get_trades(self):
-        
+    def get_trades(self, pair:str = "btc_jpy"):
+        method = "/trades"
+        req = {
+            "params":{
+                "pair": pair
+            }
+        }
+
+        url = f"{self.base_url}{method}?pair={pair}"
+        headers = self.make_header(url, self.API_KEY, req)
+        pprint(url)
+        pprint(headers)
+        response = requests.get(url)
+
+        pprint(response)
+        pprint(json.loads(response.text))
+        return json.loads(response.text)

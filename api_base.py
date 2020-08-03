@@ -25,6 +25,7 @@ coinCheckApi = CoinCheckApi(COINCHECK_API_KEY, COINCHECK_SECRET_KEY)
 coinCheckApi.exchange_orders_transactions_pagination()
 coinCheckApi.get_deposit_money()
 coinCheckApi.get_withdraws()
+coinCheckApi.get_trades("btc_jpy")
 #coinCheckApi.accounts_balance()
 #coinCheckApi.get_send_money()
 
