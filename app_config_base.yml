@@ -9,3 +9,9 @@ BANKINFO:
   BITFLYER:
     API_KEY: ""
     SECRET_KEY: ""
+  CRYPTOCOM:
+    API_KEY: ""
+    SECRET_KEY: ""
+  COINCHECK:
+    API_KEY: ""
+    SECRET_KEY: ""

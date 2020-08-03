@@ -23,7 +23,10 @@ COINCHECK_SECRET_KEY = config['BANKINFO']['COINCHECK']['SECRET_KEY']
 
 coinCheckApi = CoinCheckApi(COINCHECK_API_KEY, COINCHECK_SECRET_KEY)
 
-coinCheckApi.exchange_orders_transactions()
+coinCheckApi.accounts_balance()
+coinCheckApi.get_send_money()
+
+#coinCheckApi.exchange_orders_transactions()
 
 ###########Crypto.com###########################
 

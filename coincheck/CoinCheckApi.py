@@ -67,3 +67,41 @@ class CoinCheckApi:
         pprint(response.content)
         pprint(json.loads(response.text))
         return json.loads(response.text)
+
+    ## GET /api/accounts/balance
+    def accounts_balance(self):
+        method = "/accounts/balance"
+        req = {
+        }
+
+        url = f"{self.base_url}{method}"
+        headers = self.make_header(url, self.API_KEY, req)
+        pprint(url)
+        pprint(headers)
+        response = requests.get(url, headers=headers)
+
+        pprint(response)
+        pprint(response.content)
+        pprint(json.loads(response.text))
+        return json.loads(response.text)
+
+    ## GET /api/send_money
+    def get_send_money(self, currency: str="BTC"):
+        method = "/send_money"
+        req = {
+            "params":{
+                "currency" : currency
+            }
+        }
+
+        url = f"{self.base_url}{method}?currency={currency}"
+        #url = f"{self.base_url}{method}"
+        headers = self.make_header(url, self.API_KEY, req)
+        pprint(url)
+        pprint(headers)
+        response = requests.get(url, headers=headers)
+
+        pprint(response)
+        pprint(response.content)
+        pprint(json.loads(response.text))
+        return json.loads(response.text)
