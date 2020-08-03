@@ -10,6 +10,7 @@ import time
 from pprint import pprint
 
 ##https://crypto.com/exchange-doc
+## https://crypto.com/exchange-docs-v1
 
 class CryptoComApi:
 
@@ -23,15 +24,15 @@ class CryptoComApi:
         #return str(int(time.time() * 1000))
         return str(int(time.time() * 1000))
 
-    def make_signature(self, nonce: str, url: str, req: dict):
+    def make_signature(self, method: str, id: str, nonce: str, req: dict):
         # First ensure the params are alphabetically sorted by key
         paramString = ""
 
         if "params" in req:
             for key in req['params']:
                 paramString += key
-                paramString += "=" + str(req['params'][key])
-        sigPayload = f"{nonce}{url}{paramString}"
+                paramString += str(req['params'][key])
+        sigPayload = f"{method}{id}{self.API_KEY}{paramString}{nonce}"
         print("sigPayload")
         print(sigPayload)
         sig = hmac.new(self.SECRET_KEY.encode('utf-8'), sigPayload.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()
@@ -92,14 +93,17 @@ class CryptoComApi:
 
         #url = f"{self.base_url}/{method}?instrument_name=BTC_USDT"
         url = f"{self.base_url}/{method}"
-        sig = self.make_signature(nonce = req["nonce"], url = url, req=req)
-        sig = self.make_signature(nonce = req["nonce"], url = url, req=req)
+        id = str(req["id"])
+        sig = self.make_signature(method = method, id = id, nonce = req["nonce"], req=req)
 
         print("sig")
         print(sig)
         req["sig"] = sig
         print(req)
-        response = requests.post(self.base_url + "/private/get-order-history", req, headers=headers)
+        headers = {
+            "Content-Type" : "application/json"
+        }
+        response = requests.post(self.base_url + "/private/get-order-history", json=req, headers=headers)
         print(response.content)
         return sig
 
