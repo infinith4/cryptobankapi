@@ -6,6 +6,7 @@ import hashlib
 import json
 import requests
 import time
+import datetime
 
 from pprint import pprint
 
@@ -25,13 +26,16 @@ class CryptoComApi:
         return str(int(time.time() * 1000))
 
     def make_signature(self, method: str, id: str, nonce: str, req: dict):
-        # First ensure the params are alphabetically sorted by key
+        # NOTE: First ensure the params are alphabetically sorted by key
         paramString = ""
-
+        
         if "params" in req:
-            for key in req['params']:
-                paramString += key
-                paramString += str(req['params'][key])
+            items = req['params'].items()
+            sorted_params = sorted(items)
+            for item in sorted_params:
+                print(item)
+                paramString += item[0]
+                paramString += str(item[1])
         sigPayload = f"{method}{id}{self.API_KEY}{paramString}{nonce}"
         print("sigPayload")
         print(sigPayload)
@@ -77,7 +81,7 @@ class CryptoComApi:
         return sig
 
     # private/get-order-history
-    def private_get_order_history(self, instrument_name:str = "BTC_USDT"):
+    def private_get_order_history(self,start_ts:int, end_ts:int, instrument_name:str = "BTC_USDT"):
 
         method = "private/get-order-history"
         req = {
@@ -88,13 +92,18 @@ class CryptoComApi:
             "instrument_name": instrument_name,
             ##TODO: datetime to timestamp
             #NOTE: default is 24 hours ago.
+            "start_ts": start_ts,
+            "end_ts": end_ts,
+            "page_size": 2,
+            "page": 0
         },
         "sig": "",
         "nonce": self.get_nonce()
         }
 
+        url = f"{self.base_url}/{method}"  ##it's ok
         #url = f"{self.base_url}/{method}?instrument_name=BTC_USDT"
-        url = f"{self.base_url}/{method}?instrument_name={instrument_name}"
+        #url = f"{self.base_url}/{method}?instrument_name={instrument_name}&start_ts={start_ts}&end_ts={end_ts}"
         id = str(req["id"])
         sig = self.make_signature(method = method, id = id, nonce = req["nonce"], req=req)
 
@@ -108,6 +117,18 @@ class CryptoComApi:
         response = requests.post(url, json=req, headers=headers)
         print(response.content)
         return sig
+
+    def get_order_histories(self, startDateTime: datetime, endDateTime: datetime, instrument_name:str = "CRO_USDT"):
+        subDateTime = endDateTime - startDateTime
+        for day in range(subDateTime.days):
+            epochStartDateTime = startDateTime + datetime.timedelta(days=day)
+            epochEndDateTime = startDateTime + datetime.timedelta(days=day + 1)
+            pprint(f"from {epochStartDateTime} to {epochEndDateTime}")
+            startTimeStamp = int(epochStartDateTime.timestamp()* 1000)
+            endTimeStamp = int(epochEndDateTime.timestamp()* 1000)
+            time.sleep(2)
+            self.private_get_order_history(startTimeStamp, endTimeStamp, instrument_name)
+
 
     ## GET public/get-instruments
     def public_get_instruments(self):

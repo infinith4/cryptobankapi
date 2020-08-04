@@ -6,6 +6,9 @@ from coincheck.CoinCheckApi import CoinCheckApi
 from coinmarketcap.CoinMarketCapApi import CoinMarketCapApi
 from utils.Config import Config
 
+import datetime
+
+
 JPY_USDT = 107
 configFile = "app_config.yml"
 config = Config(configFile).content
@@ -45,9 +48,23 @@ COINMARKETCAP_API_KEY = config['BANKINFO']['COINMARKETCAP']['API_KEY']
 
 cryptoComApi = CryptoComApi(CRYPTOCOM_API_KEY, CRYPTOCOM_API_SECRET)
 
-cryptoComApi.private_get_order_history("CRO_USDT")
 cryptoComApi.public_get_instruments()
 
+
+
+# startDateTime = datetime.datetime(2020, 5, 12, 0, 0, 0)
+# endDateTime = datetime.datetime(2020, 5, 13, 0, 0, 0)
+# startTimeStamp = int(startDateTime.timestamp()* 1000)
+# endTimeStamp = int(endDateTime.timestamp()* 1000)
+# print(startTimeStamp)
+# print(endTimeStamp)
+
+# cryptoComApi.private_get_order_history(startTimeStamp, endTimeStamp, "CRO_USDT")
+
+startDateTime = datetime.datetime(2020, 5, 1, 0, 0, 0)
+endDateTime = datetime.datetime(2020, 5, 31, 0, 0, 0)
+
+cryptoComApi.get_order_histories(startDateTime, endDateTime, "CRO_USDT")
 #cryptoComApi.public_get_instruments()
 
 # ######################################
