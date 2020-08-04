@@ -61,8 +61,8 @@ cryptoComApi.public_get_instruments()
 
 # cryptoComApi.private_get_order_history(startTimeStamp, endTimeStamp, "CRO_USDT")
 
-startDateTime = datetime.datetime(2020, 5, 1, 0, 0, 0)
-endDateTime = datetime.datetime(2020, 5, 31, 0, 0, 0)
+startDateTime = datetime.datetime(2020, 5, 4, 0, 0, 0)
+endDateTime = datetime.datetime(2020, 5, 15, 0, 0, 0)
 
 cryptoComApi.get_order_histories(startDateTime, endDateTime, "CRO_USDT")
 #cryptoComApi.public_get_instruments()

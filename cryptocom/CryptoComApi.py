@@ -7,8 +7,10 @@ import json
 import requests
 import time
 import datetime
+from py_linq import Enumerable
 
 from pprint import pprint
+from cryptocom.models.order_history_model import OrderHistoryModel
 
 ##https://crypto.com/exchange-doc
 ## https://crypto.com/exchange-docs-v1
@@ -33,12 +35,11 @@ class CryptoComApi:
             items = req['params'].items()
             sorted_params = sorted(items)
             for item in sorted_params:
-                print(item)
                 paramString += item[0]
                 paramString += str(item[1])
         sigPayload = f"{method}{id}{self.API_KEY}{paramString}{nonce}"
-        print("sigPayload")
-        print(sigPayload)
+        # print("sigPayload")
+        # print(sigPayload)
         sig = hmac.new(self.SECRET_KEY.encode('utf-8'), sigPayload.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()
 
         return sig
@@ -50,10 +51,10 @@ class CryptoComApi:
     #def private_get_trades():
 
     def private_get_order_detail(self, order_id: str):
-
+        method = "private/get-order-detail"
         req = {
         "id": 11,
-        "method": "private/get-order-detail",
+        "method": method,
         "api_key": self.API_KEY,
         "params": {
             "order_id": order_id,
@@ -69,16 +70,17 @@ class CryptoComApi:
                 paramString += key
                 paramString += str(req['params'][key])
 
+        url = f"{self.base_url}/{method}"
         sigPayload = req['method'] + str(req['id']) + req['api_key'] + paramString + str(req['nonce'])
-        print("sigPayload")
-        print(sigPayload)
+        # print("sigPayload")
+        # print(sigPayload)
         sig = hmac.new(bytes(str(self.SECRET_KEY), 'utf-8'), msg=bytes(sigPayload, 'utf-8'), digestmod=hashlib.sha256).hexdigest()
 
-        print("sig")
-        print(sig)
-        response = requests.post(self.base_url + "/private/get-order-detail", json=req)
+        # print("sig")
+        # print(sig)
+        response = requests.post(url, json=req)
         print(response)
-        return sig
+        return json.loads(response.text)
 
     # private/get-order-history
     def private_get_order_history(self,start_ts:int, end_ts:int, instrument_name:str = "BTC_USDT"):
@@ -94,32 +96,32 @@ class CryptoComApi:
             #NOTE: default is 24 hours ago.
             "start_ts": start_ts,
             "end_ts": end_ts,
-            "page_size": 2,
-            "page": 0
+            "page_size": 2,  ##TODO: mod
+            "page": 0  ##TODO: mod
         },
         "sig": "",
         "nonce": self.get_nonce()
         }
 
-        url = f"{self.base_url}/{method}"  ##it's ok
+        url = f"{self.base_url}/{method}"  ##NOTE: no need query params.
         #url = f"{self.base_url}/{method}?instrument_name=BTC_USDT"
         #url = f"{self.base_url}/{method}?instrument_name={instrument_name}&start_ts={start_ts}&end_ts={end_ts}"
         id = str(req["id"])
         sig = self.make_signature(method = method, id = id, nonce = req["nonce"], req=req)
 
-        print("sig")
-        print(sig)
+        #print("sig")
+        #print(sig)
         req["sig"] = sig
-        print(req)
+        #print(req)
         headers = {
             "Content-Type" : "application/json"
         }
         response = requests.post(url, json=req, headers=headers)
-        print(response.content)
-        return sig
+        return json.loads(response.text)
 
     def get_order_histories(self, startDateTime: datetime, endDateTime: datetime, instrument_name:str = "CRO_USDT"):
         subDateTime = endDateTime - startDateTime
+        orderHistroyList = []
         for day in range(subDateTime.days):
             epochStartDateTime = startDateTime + datetime.timedelta(days=day)
             epochEndDateTime = startDateTime + datetime.timedelta(days=day + 1)
@@ -127,7 +129,29 @@ class CryptoComApi:
             startTimeStamp = int(epochStartDateTime.timestamp()* 1000)
             endTimeStamp = int(epochEndDateTime.timestamp()* 1000)
             time.sleep(2)
-            self.private_get_order_history(startTimeStamp, endTimeStamp, instrument_name)
+            resJson = self.private_get_order_history(startTimeStamp, endTimeStamp, instrument_name)
+            if resJson["code"] != 0:
+                continue
+
+            if len(resJson["result"]["order_list"]) == 0:
+                continue
+            else:
+                pprint(resJson["result"]["order_list"])
+            
+            for order in resJson["result"]["order_list"]:
+                orderHistroyList.append(OrderHistoryModel(order["order_id"], order["side"], order["price"], order["quantity"]))
+
+        #orderHistroyList = list(map(OrderHistoryModel, orderHistroyList)) #does not work
+        self.get_totally(orderHistroyList)
+            
+    def get_totally_history_data(self, orderHistroyList: list):
+        ##https://viralogic.github.io/py-enumerable/
+        enumorderHistroyList = Enumerable(orderHistroyList)
+        sellOrder = enumorderHistroyList.where(lambda x: x.side == "SELL")
+
+        for orderHistory in sellOrder:
+            #orderHistory = map(OrderHistoryModel, item) #does not work
+            pprint(orderHistory.price)
 
 
     ## GET public/get-instruments
@@ -141,7 +165,7 @@ class CryptoComApi:
         url = f"{self.base_url}/{method}"
         response = requests.get(url, json=req)
 
-        pprint(response)
-        pprint(json.loads(response.text))
+        # pprint(response)
+        # pprint(json.loads(response.text))
 
         return json.loads(response.text)

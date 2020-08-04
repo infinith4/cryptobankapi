@@ -12,6 +12,8 @@ requests = "*"
 pybitflyer = "*"
 pyyaml = "*"
 cryptocom-exchange = "*"
+py-linq = "*"
+six = "*"
 
 [requires]
 python_version = "3.8"
