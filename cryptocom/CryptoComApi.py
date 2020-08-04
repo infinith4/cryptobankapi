@@ -140,12 +140,14 @@ class CryptoComApi:
                 pprint(resJson["result"]["order_list"])
             
             for order in resJson["result"]["order_list"]:
-                orderHistroyList.append(OrderHistoryModel(order["order_id"], order["side"], order["price"], order["quantity"]))
+                if order['status'] == 'FILLED':
+                    orderHistroyList.append(OrderHistoryModel(order["order_id"], order["side"], order["price"], order["quantity"]))
 
         #orderHistroyList = list(map(OrderHistoryModel, orderHistroyList)) #does not work
-        self.get_totally_history_data(orderHistroyList)
+        unit = self.get_pair_to_unit_for_profit(instrument_name)
+        self.get_totally_history_data(orderHistroyList, unit)
             
-    def get_totally_history_data(self, orderHistroyList: list):
+    def get_totally_history_data(self, orderHistroyList: list, unit: str):
         ##https://viralogic.github.io/py-enumerable/
         sellAmount = 0
         sellPriceTotal = 0
@@ -154,7 +156,7 @@ class CryptoComApi:
         cnt = 0
         for orderHistory in sellOrders:
             #orderHistory = map(OrderHistoryModel, item) #does not work
-            pprint(orderHistory.price)
+            pprint(f"{orderHistory.price};{orderHistory.quantity}")
             sellPriceTotal += orderHistory.price
             sellAmount += orderHistory.quantity
             cnt += 1
@@ -168,14 +170,19 @@ class CryptoComApi:
         cnt = 0
         for orderHistory in buyOrders:
             #orderHistory = map(OrderHistoryModel, item) #does not work
-            pprint(orderHistory.price)
+            pprint(f"{orderHistory.price};{orderHistory.quantity}")
             buyPriceTotal += orderHistory.price
             buyAmount += orderHistory.quantity
             cnt += 1
 
-        buyOrderTotallyHistory = OrderTotallyHistoryModel(sellAmount, buyPriceTotal/cnt)
-        pprint((sellOrderTotallyHistory.averagePrice - buyOrderTotallyHistory.averagePrice) * sellOrderTotallyHistory.totalQuantity)
+        buyOrderTotallyHistory = OrderTotallyHistoryModel(buyAmount, buyPriceTotal/cnt)
+        totalQuantity = buyOrderTotallyHistory.totalQuantity if sellOrderTotallyHistory.totalQuantity > buyOrderTotallyHistory.totalQuantity else sellOrderTotallyHistory.totalQuantity
+        profit = (sellOrderTotallyHistory.averagePrice - buyOrderTotallyHistory.averagePrice) * totalQuantity
+        formatted_profit = "{:>10.4f}".format(profit)
+        pprint(f"{formatted_profit} {unit}")
 
+    def get_pair_to_unit_for_profit(self, instrument_name: str):
+        return instrument_name.split("_")[1]
 
     ## GET public/get-instruments
     def public_get_instruments(self):
