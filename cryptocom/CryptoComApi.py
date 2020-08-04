@@ -11,6 +11,7 @@ from py_linq import Enumerable
 
 from pprint import pprint
 from cryptocom.models.order_history_model import OrderHistoryModel
+from cryptocom.models.order_totally_history_model import OrderTotallyHistoryModel
 
 ##https://crypto.com/exchange-doc
 ## https://crypto.com/exchange-docs-v1
@@ -142,16 +143,38 @@ class CryptoComApi:
                 orderHistroyList.append(OrderHistoryModel(order["order_id"], order["side"], order["price"], order["quantity"]))
 
         #orderHistroyList = list(map(OrderHistoryModel, orderHistroyList)) #does not work
-        self.get_totally(orderHistroyList)
+        self.get_totally_history_data(orderHistroyList)
             
     def get_totally_history_data(self, orderHistroyList: list):
         ##https://viralogic.github.io/py-enumerable/
+        sellAmount = 0
+        sellPriceTotal = 0
         enumorderHistroyList = Enumerable(orderHistroyList)
-        sellOrder = enumorderHistroyList.where(lambda x: x.side == "SELL")
-
-        for orderHistory in sellOrder:
+        sellOrders = enumorderHistroyList.where(lambda x: x.side == "SELL")
+        cnt = 0
+        for orderHistory in sellOrders:
             #orderHistory = map(OrderHistoryModel, item) #does not work
             pprint(orderHistory.price)
+            sellPriceTotal += orderHistory.price
+            sellAmount += orderHistory.quantity
+            cnt += 1
+
+        sellOrderTotallyHistory = OrderTotallyHistoryModel(sellAmount, sellPriceTotal/cnt)
+        pprint(sellOrderTotallyHistory)
+        buyAmount = 0
+        buyPriceTotal = 0
+        enumorderHistroyList = Enumerable(orderHistroyList)
+        buyOrders = enumorderHistroyList.where(lambda x: x.side == "BUY")
+        cnt = 0
+        for orderHistory in buyOrders:
+            #orderHistory = map(OrderHistoryModel, item) #does not work
+            pprint(orderHistory.price)
+            buyPriceTotal += orderHistory.price
+            buyAmount += orderHistory.quantity
+            cnt += 1
+
+        buyOrderTotallyHistory = OrderTotallyHistoryModel(sellAmount, buyPriceTotal/cnt)
+        pprint((sellOrderTotallyHistory.averagePrice - buyOrderTotallyHistory.averagePrice) * sellOrderTotallyHistory.totalQuantity)
 
 
     ## GET public/get-instruments
