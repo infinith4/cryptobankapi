@@ -146,9 +146,10 @@ class CryptoComApi:
         #orderHistroyList = list(map(OrderHistoryModel, orderHistroyList)) #does not work
         unit = self.get_pair_to_unit_for_profit(instrument_name)
         self.get_totally_history_data(orderHistroyList, unit)
-            
+    
     def get_totally_history_data(self, orderHistroyList: list, unit: str):
         ##https://viralogic.github.io/py-enumerable/
+        sellPriceAmount = 0
         sellAmount = 0
         sellPriceTotal = 0
         enumorderHistroyList = Enumerable(orderHistroyList)
@@ -159,12 +160,14 @@ class CryptoComApi:
             pprint(f"{orderHistory.price};{orderHistory.quantity}")
             sellPriceTotal += orderHistory.price
             sellAmount += orderHistory.quantity
+            sellPriceAmount += orderHistory.quantity * orderHistory.price
             cnt += 1
 
-        sellOrderTotallyHistory = OrderTotallyHistoryModel(sellAmount, sellPriceTotal/cnt)
+        sellOrderTotallyHistory = OrderTotallyHistoryModel(sellAmount, sellPriceTotal/cnt)  ## WARNING: 計算が間違っている
         pprint(sellOrderTotallyHistory)
         buyAmount = 0
         buyPriceTotal = 0
+        buyPriceAmount = 0
         enumorderHistroyList = Enumerable(orderHistroyList)
         buyOrders = enumorderHistroyList.where(lambda x: x.side == "BUY")
         cnt = 0
@@ -173,11 +176,12 @@ class CryptoComApi:
             pprint(f"{orderHistory.price};{orderHistory.quantity}")
             buyPriceTotal += orderHistory.price
             buyAmount += orderHistory.quantity
+            buyPriceAmount += orderHistory.quantity * orderHistory.price
             cnt += 1
 
-        buyOrderTotallyHistory = OrderTotallyHistoryModel(buyAmount, buyPriceTotal/cnt)
+        buyOrderTotallyHistory = OrderTotallyHistoryModel(buyAmount, buyPriceTotal/cnt)  ## WARNING: 計算が間違っている
         totalQuantity = buyOrderTotallyHistory.totalQuantity if sellOrderTotallyHistory.totalQuantity > buyOrderTotallyHistory.totalQuantity else sellOrderTotallyHistory.totalQuantity
-        profit = (sellOrderTotallyHistory.averagePrice - buyOrderTotallyHistory.averagePrice) * totalQuantity
+        profit = sellPriceAmount - buyPriceAmount #(sellOrderTotallyHistory.averagePrice - buyOrderTotallyHistory.averagePrice) * totalQuantity
         formatted_profit = "{:>10.4f}".format(profit)
         pprint(f"{formatted_profit} {unit}")
 
