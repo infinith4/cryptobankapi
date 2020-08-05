@@ -185,6 +185,12 @@ class CryptoComApi:
         formatted_profit = "{:>10.4f}".format(profit)
         pprint(f"{formatted_profit} {unit}")
 
+        # 0.0634 * 5348.087 = 339.0687158
+        # 0.0657 * 2.0 = 0.1314
+        # 0.0635 * 5000.0 = 317.5
+        # (0.0634 - 0.0635) * 5000 = -0.5
+
+
     def get_pair_to_unit_for_profit(self, instrument_name: str):
         return instrument_name.split("_")[1]
 
