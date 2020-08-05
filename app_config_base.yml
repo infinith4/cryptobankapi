@@ -1,3 +1,6 @@
+MONGODB:
+  USER_NAME: ""
+  PASSWORD: ""
 BANKINFO: 
   COINALL:
     API_KEY: ""
@@ -14,4 +17,7 @@ BANKINFO:
     SECRET_KEY: ""
   COINCHECK:
     API_KEY: ""
+    SECRET_KEY: ""
+  COINMARKETCAP:
+    API_KEY: "sandbox"
     SECRET_KEY: ""
