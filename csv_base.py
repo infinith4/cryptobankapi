@@ -8,71 +8,46 @@ from pprint import pprint
 from cryptocom.utils.csv_reader import CsvReader
 from cryptocom.models.csv_model import CsvModel
 #import dnspython
+class CsvBase:
 
-configFile = "app_config.yml"
-config = Config(configFile).content
-
-MONGODB_USER_NAME = config["MONGODB"]["USER_NAME"]
-MONGODB_PASSWORD = config["MONGODB"]["PASSWORD"]
-if __name__ == '__main__':
-
-    mongo_username = MONGODB_USER_NAME
-    mongo_password = MONGODB_PASSWORD
-    connectionstr = 'mongodb+srv://%s:%s@cluster0-xhjo9.mongodb.net/test?retryWrites=true&w=majority' % (mongo_username, mongo_password)
-    mongo = MongoClient(connectionstr)
+    def __init__(self, config_file:str= "app_config.yml"):
+        self.config = Config(configFile).content
+        mongo_username = config["MONGODB"]["USER_NAME"]
+        mongo_password = config["MONGODB"]["PASSWORD"]
+        connectionstr = 'mongodb+srv://%s:%s@cluster0-xhjo9.mongodb.net/test?retryWrites=true&w=majority' % (mongo_username, mongo_password)
+        self.mongo = MongoClient(connectionstr)
     
-    # 合計
-    # pipeline = [
-    #     {"$group":{"_id":"page_total_count","total":{"$sum":"$transaction_kind"}}}
-    # ]
-
-    pipeline = [
-        # ####it's working
-        # {
-        #     "$group": { 
-        #         "_id": "$transaction_kind", 
-        #         "count": { "$sum": 1 }
-        #     }
-        # }
-
-
-
-        {
-            "$match" : {
-                "transaction_kind" : "crypto_earn_interest_paid"
+    def get_total_earn_amount_in_usd(self):
+            pipeline = [
+            {
+                "$match" : {
+                    "transaction_kind" : "crypto_earn_interest_paid"
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$transaction_kind",
+                    "total_amount": { "$sum": "$native_amount_in_usd" }
+                }
+            },
+            {
+                "$sort": {
+                    "time_stamp": 1 
+                }
             }
-        },
-        {
-            "$group": {
-                "_id": "$transaction_kind",
-                "total_amount": { "$sum": "$native_amount_in_usd" }
-            }
-        },
-        {
-            "$sort": {
-                "time_stamp": 1 
-            }
-        }
-    ]
-    results = mongo.test.cryptocom_transactions.aggregate(pipeline)
-    total_amount = 0
-    for item in results:
-        pprint(item)
-        total_amount = item["total_amount"]
+        ]
+        results = mongo.test.cryptocom_transactions.aggregate(pipeline)
+        total_amount = 0
+        for item in results:
+            total_amount = item["total_amount"]
 
-    #tests
-    pipeline = [
-        {
-            "$match" : {
-                "transaction_kind" : "crypto_earn_interest_paid"
-            }
-        }
-    ]
-    test_total_amount = 0
-    test_results = mongo.test.cryptocom_transactions.aggregate(pipeline)
-    for item in test_results:
-        test_total_amount += item["native_amount_in_usd"]
-    assert(test_total_amount == total_amount, 'total_amount is not matched.')
+        return total_amount
+
+if __name__ == '__main__':
+    csvBase = CsvBase()
+    total_earn_amount = csvBase.get_total_earn_amount()
+
+
 
     cryptocom_csv_file_path = "csv_files/cryptocom/crypto_transactions_record_20200801_101854.csv"  ##TODO: search directory
     csvReader = CsvReader(cryptocom_csv_file_path)
@@ -91,3 +66,6 @@ if __name__ == '__main__':
         if record == None:
             mongo.test.cryptocom_transactions.insert(data)
             print("inserted")
+
+
+        

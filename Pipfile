@@ -16,6 +16,7 @@ py-linq = "*"
 six = "*"
 pymongo = "*"
 dnspython = "~=1.16.0"
+unittest = "*"
 
 [requires]
 python_version = "3.8"
