@@ -1,4 +1,6 @@
 import sys
+sys.path[0:0] = [""]  ## NOTE: よくわからないけど、これがないと上位層のcsv_base がimport できない
+
 import unittest
 from csv_base import CsvBase ##TODO: it's failed
 

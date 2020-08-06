@@ -11,14 +11,14 @@ from cryptocom.models.csv_model import CsvModel
 class CsvBase:
 
     def __init__(self, config_file:str= "app_config.yml"):
-        self.config = Config(configFile).content
-        mongo_username = config["MONGODB"]["USER_NAME"]
-        mongo_password = config["MONGODB"]["PASSWORD"]
+        self.config = Config(config_file).content
+        mongo_username = self.config["MONGODB"]["USER_NAME"]
+        mongo_password = self.config["MONGODB"]["PASSWORD"]
         connectionstr = 'mongodb+srv://%s:%s@cluster0-xhjo9.mongodb.net/test?retryWrites=true&w=majority' % (mongo_username, mongo_password)
         self.mongo = MongoClient(connectionstr)
     
     def get_total_earn_amount_in_usd(self):
-            pipeline = [
+        pipeline = [
             {
                 "$match" : {
                     "transaction_kind" : "crypto_earn_interest_paid"
@@ -36,6 +36,7 @@ class CsvBase:
                 }
             }
         ]
+
         results = mongo.test.cryptocom_transactions.aggregate(pipeline)
         total_amount = 0
         for item in results:
