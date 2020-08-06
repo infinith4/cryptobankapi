@@ -15,15 +15,51 @@ config = Config(configFile).content
 MONGODB_USER_NAME = config["MONGODB"]["USER_NAME"]
 MONGODB_PASSWORD = config["MONGODB"]["PASSWORD"]
 if __name__ == '__main__':
-    cryptocom_csv_file_path = "csv_files/cryptocom/crypto_transactions_record_20200801_101854.csv"  ##TODO: search directory
-    csvReader = CsvReader(cryptocom_csv_file_path)
-    csv_list = csvReader.get_csv_list()
-    csv_header = csvReader.get_csv_header()
 
     mongo_username = MONGODB_USER_NAME
     mongo_password = MONGODB_PASSWORD
     connectionstr = 'mongodb+srv://%s:%s@cluster0-xhjo9.mongodb.net/test?retryWrites=true&w=majority' % (mongo_username, mongo_password)
     mongo = MongoClient(connectionstr)
+    
+    # 合計
+    # pipeline = [
+    #     {"$group":{"_id":"page_total_count","total":{"$sum":"$transaction_kind"}}}
+    # ]
+
+    pipeline = [
+        #it's working
+    {
+        "$group": { 
+            "_id": "$transaction_kind", 
+            "count": { "$sum": 1 }
+        }
+    }
+        #{"$group" :{"_id": "$transaction_kind"}, "count": {"$sum" : 1}}  #it's not working
+        # {
+        #     "$match" : {
+        #         "transaction_kind" : "crypto_earn_interest_paid"
+        #     }
+        # },
+        # {
+        #     "$group": {
+        #         "totalAmount": { "$sum": "$native_amount_in_usd" }
+        #     }
+        # },
+        # {
+        #     "$sort": {
+        #         "time_stamp": 1 
+        #     }
+        # }
+    ]
+    results = mongo.test.cryptocom_transactions.aggregate(pipeline)
+    for item in results:
+        pprint(item)
+
+    cryptocom_csv_file_path = "csv_files/cryptocom/crypto_transactions_record_20200801_101854.csv"  ##TODO: search directory
+    csvReader = CsvReader(cryptocom_csv_file_path)
+    csv_list = csvReader.get_csv_list()
+    csv_header = csvReader.get_csv_header()
+
     for csv_item in csv_list:
         data = {
                 "time_stamp": csv_item.time_stamp , "transaction_description": csv_item.transaction_description, "currency": csv_item.currency,
@@ -32,7 +68,7 @@ if __name__ == '__main__':
                 "transaction_kind": csv_item.transaction_kind
             }
         record = mongo.test.cryptocom_transactions.find_one(data)
-        pprint(record)
+        #pprint(record)
         if record == None:
             mongo.test.cryptocom_transactions.insert(data)
             print("inserted")
