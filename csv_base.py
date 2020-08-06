@@ -27,33 +27,52 @@ if __name__ == '__main__':
     # ]
 
     pipeline = [
-        #it's working
-    {
-        "$group": { 
-            "_id": "$transaction_kind", 
-            "count": { "$sum": 1 }
-        }
-    }
-        #{"$group" :{"_id": "$transaction_kind"}, "count": {"$sum" : 1}}  #it's not working
+        # ####it's working
         # {
-        #     "$match" : {
-        #         "transaction_kind" : "crypto_earn_interest_paid"
-        #     }
-        # },
-        # {
-        #     "$group": {
-        #         "totalAmount": { "$sum": "$native_amount_in_usd" }
-        #     }
-        # },
-        # {
-        #     "$sort": {
-        #         "time_stamp": 1 
+        #     "$group": { 
+        #         "_id": "$transaction_kind", 
+        #         "count": { "$sum": 1 }
         #     }
         # }
+
+
+
+        {
+            "$match" : {
+                "transaction_kind" : "crypto_earn_interest_paid"
+            }
+        },
+        {
+            "$group": {
+                "_id": "$transaction_kind",
+                "total_amount": { "$sum": "$native_amount_in_usd" }
+            }
+        },
+        {
+            "$sort": {
+                "time_stamp": 1 
+            }
+        }
     ]
     results = mongo.test.cryptocom_transactions.aggregate(pipeline)
+    total_amount = 0
     for item in results:
         pprint(item)
+        total_amount = item["total_amount"]
+
+    #tests
+    pipeline = [
+        {
+            "$match" : {
+                "transaction_kind" : "crypto_earn_interest_paid"
+            }
+        }
+    ]
+    test_total_amount = 0
+    test_results = mongo.test.cryptocom_transactions.aggregate(pipeline)
+    for item in test_results:
+        test_total_amount += item["native_amount_in_usd"]
+    assert(test_total_amount == total_amount, 'total_amount is not matched.')
 
     cryptocom_csv_file_path = "csv_files/cryptocom/crypto_transactions_record_20200801_101854.csv"  ##TODO: search directory
     csvReader = CsvReader(cryptocom_csv_file_path)
